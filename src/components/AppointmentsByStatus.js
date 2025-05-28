@@ -3,7 +3,7 @@ import axios from "axios";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 
 const CUBE_API_URL = "http://localhost:4000/cubejs-api/v1/load";
-const CUBE_API_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NDg0NjIyMjEsImV4cCI6MTc0OTA2NzAyMX0.xlbPRF4xO2pM4j_AqaQuZociRmFbYpi30vNRdmNoMcY";
+const CUBE_API_TOKEN = process.env.REACT_APP_CUBEJS_API_TOKEN;
 
 export default function AppointmentsByStatus() {
     const [data, setData] = useState([]);
