@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 
-const CUBE_API_URL = "http://localhost:4002/cubejs-api/v1/load";
-const CUBE_API_TOKEN = "secret";
+const CUBE_API_URL = "http://localhost:4000/cubejs-api/v1/load";
+const CUBE_API_TOKEN = "seceyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NDg0NjE5MTEsImV4cCI6MTc0OTA2NjcxMX0.OEiWbO_DysjnMXIq1Uipyna_hdtKOTiYCHup_w6KuA8ret";
 
 export default function AppointmentsByStatus() {
     const [data, setData] = useState([]);
@@ -33,7 +33,7 @@ export default function AppointmentsByStatus() {
         };
 
         axios
-            .post(CUBE_API_URL, { query }, { headers: { Authorization: CUBE_API_TOKEN } })
+            .post(CUBE_API_URL, { query }, { headers: { Authorization: `Bearer ${CUBE_API_TOKEN}` } })
             .then(({ data: { data } }) => {
                 const summary = {};
                 data.forEach(row => {
