@@ -1,12 +1,8 @@
 import React from "react";
-import AppointmentsByStatus from "./components/AppointmentsByStatus";
+import Dashboard from "./Dashboard";
 
 function App() {
-    return (
-        <div className="App">
-            <AppointmentsByStatus />
-        </div>
-    );
+    return <Dashboard />;
 }
 
 export default App;
