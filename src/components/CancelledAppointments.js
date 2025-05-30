@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 
 const CUBE_API_URL = "http://localhost:4000/cubejs-api/v1/load";
 const CUBE_API_TOKEN = process.env.REACT_APP_CUBEJS_API_TOKEN;
@@ -16,19 +16,25 @@ const ranges = [
     { label: "Next 4W", value: "next 4 weeks" },
 ];
 
-export default function AppointmentsByStatus() {
+export default function AppointmentsCancelled() {
     const [data, setData] = useState([]);
     const [range, setRange] = useState("next 4 weeks");
 
     useEffect(() => {
         const query = {
             measures: ["appointments.count"],
-            dimensions: ["appointments.status"],
             timeDimensions: [
                 {
                     dimension: "appointments.date",
                     granularity: "day",
                     dateRange: range,
+                },
+            ],
+            filters: [
+                {
+                    dimension: "appointments.status",
+                    operator: "equals",
+                    values: ["Cancelled"],
                 },
             ],
         };
@@ -44,20 +50,18 @@ export default function AppointmentsByStatus() {
                 }
             )
             .then(({ data: { data } }) => {
-                const summary = {};
-                data.forEach(row => {
-                    const s = row["appointments.status"];
-                    const c = +row["appointments.count"];
-                    summary[s] = (summary[s] || 0) + c;
-                });
-                setData(Object.entries(summary).map(([status, count]) => ({ status, count })));
+                const formatted = data.map(row => ({
+                    date: row["appointments.date"],
+                    count: +row["appointments.count"],
+                }));
+                setData(formatted);
             })
             .catch(() => setData([]));
     }, [range]);
 
     return (
         <div style={{ textAlign: "center", padding: 20 }}>
-            <h3>Appointments by Status</h3>
+            <h3>Cancelled Appointments</h3>
             <div style={{ marginBottom: 16 }}>
                 {ranges.map(r => (
                     <button
@@ -66,7 +70,7 @@ export default function AppointmentsByStatus() {
                         style={{
                             margin: "0 4px",
                             padding: "4px 8px",
-                            background: r.value === range ? "#3949AB" : "#eee",
+                            background: r.value === range ? "#D81B60" : "#eee",
                             color: r.value === range ? "#fff" : "#000",
                             border: "none",
                             borderRadius: 4,
@@ -81,13 +85,13 @@ export default function AppointmentsByStatus() {
                 <div style={{ color: "#666", marginTop: 50 }}>No data</div>
             ) : (
                 <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={data} layout="vertical" margin={{ top: 20, right: 30, left: 100, bottom: 20 }}>
+                    <LineChart data={data} margin={{ top: 20, right: 30, left: 40, bottom: 20 }}>
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis type="number" />
-                        <YAxis dataKey="status" type="category" />
+                        <XAxis dataKey="date" />
+                        <YAxis />
                         <Tooltip />
-                        <Bar dataKey="count" fill="#3949AB" isAnimationActive />
-                    </BarChart>
+                        <Line type="monotone" dataKey="count" stroke="#D81B60" strokeWidth={2} dot />
+                    </LineChart>
                 </ResponsiveContainer>
             )}
         </div>

@@ -5,22 +5,23 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Toolti
 const CUBE_API_URL = "http://localhost:4000/cubejs-api/v1/load";
 const CUBE_API_TOKEN = process.env.REACT_APP_CUBEJS_API_TOKEN;
 
+const ranges = [
+    { label: "1D", value: "last 1 day" },
+    { label: "7D", value: "last 7 days" },
+    { label: "4W", value: "last 4 weeks" },
+    { label: "12W", value: "last 12 weeks" },
+    { label: "6M", value: "last 6 months" },
+    { label: "12M", value: "last 12 months" },
+    { label: "36M", value: "last 36 months" },
+    { label: "Next 4W", value: "next 4 weeks" },
+];
+
 export default function AppointmentsPerStaff() {
     const [data, setData] = useState([]);
-    const [range, setRange] = useState("last 4 weeks");
-
-    const ranges = [
-        { label: "1D", value: "last 1 day" },
-        { label: "7D", value: "last 7 days" },
-        { label: "4W", value: "last 4 weeks" },
-        { label: "12W", value: "last 12 weeks" },
-        { label: "6M", value: "last 6 months" },
-        { label: "12M", value: "last 12 months" },
-        { label: "36M", value: "last 36 months" },
-    ];
+    const [range, setRange] = useState("next 4 weeks");
 
     useEffect(() => {
-        const dynamicQuery = {
+        const query = {
             measures: ["appointments.count"],
             dimensions: ["appointments.staff_name", "appointments.price"],
             timeDimensions: [
@@ -38,10 +39,12 @@ export default function AppointmentsPerStaff() {
             ],
         };
 
+        console.log("Cube Query:", query);
+
         axios
             .post(
                 CUBE_API_URL,
-                { query: dynamicQuery },
+                { query: query },
                 {
                     headers: { Authorization: `Bearer ${CUBE_API_TOKEN}` },
                 }

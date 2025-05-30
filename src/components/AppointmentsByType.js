@@ -16,18 +16,17 @@ const ranges = [
     { label: "Next 4W", value: "next 4 weeks" },
 ];
 
-export default function AppointmentsByStatus() {
+export default function AppointmentsByType() {
     const [data, setData] = useState([]);
     const [range, setRange] = useState("next 4 weeks");
 
     useEffect(() => {
         const query = {
             measures: ["appointments.count"],
-            dimensions: ["appointments.status"],
+            dimensions: ["appointments.type", "appointments.price"],
             timeDimensions: [
                 {
                     dimension: "appointments.date",
-                    granularity: "day",
                     dateRange: range,
                 },
             ],
@@ -46,18 +45,18 @@ export default function AppointmentsByStatus() {
             .then(({ data: { data } }) => {
                 const summary = {};
                 data.forEach(row => {
-                    const s = row["appointments.status"];
-                    const c = +row["appointments.count"];
-                    summary[s] = (summary[s] || 0) + c;
+                    const type = row["appointments.type"];
+                    const count = +row["appointments.count"];
+                    summary[type] = (summary[type] || 0) + count;
                 });
-                setData(Object.entries(summary).map(([status, count]) => ({ status, count })));
+                setData(Object.entries(summary).map(([type, count]) => ({ type, count })));
             })
             .catch(() => setData([]));
     }, [range]);
 
     return (
         <div style={{ textAlign: "center", padding: 20 }}>
-            <h3>Appointments by Status</h3>
+            <h3>Appointments by Type</h3>
             <div style={{ marginBottom: 16 }}>
                 {ranges.map(r => (
                     <button
@@ -66,7 +65,7 @@ export default function AppointmentsByStatus() {
                         style={{
                             margin: "0 4px",
                             padding: "4px 8px",
-                            background: r.value === range ? "#3949AB" : "#eee",
+                            background: r.value === range ? "#1E88E5" : "#eee",
                             color: r.value === range ? "#fff" : "#000",
                             border: "none",
                             borderRadius: 4,
@@ -84,9 +83,9 @@ export default function AppointmentsByStatus() {
                     <BarChart data={data} layout="vertical" margin={{ top: 20, right: 30, left: 100, bottom: 20 }}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis type="number" />
-                        <YAxis dataKey="status" type="category" />
+                        <YAxis dataKey="type" type="category" />
                         <Tooltip />
-                        <Bar dataKey="count" fill="#3949AB" isAnimationActive />
+                        <Bar dataKey="count" fill="#1E88E5" isAnimationActive />
                     </BarChart>
                 </ResponsiveContainer>
             )}
