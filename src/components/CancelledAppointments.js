@@ -6,7 +6,6 @@ const CUBE_API_URL = "http://localhost:4000/cubejs-api/v1/load";
 const CUBE_API_TOKEN = process.env.REACT_APP_CUBEJS_API_TOKEN;
 
 const ranges = [
-    { label: "1D", value: "last 1 day" },
     { label: "7D", value: "last 7 days" },
     { label: "4W", value: "last 4 weeks" },
     { label: "12W", value: "last 12 weeks" },
