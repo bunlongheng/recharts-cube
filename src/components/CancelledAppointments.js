@@ -17,7 +17,7 @@ const ranges = [
 
 export default function AppointmentsCancelled() {
     const [data, setData] = useState([]);
-    const [range, setRange] = useState("next 4 weeks");
+    const [range, setRange] = useState("last 36 months");
 
     useEffect(() => {
         const query = {
@@ -38,7 +38,7 @@ export default function AppointmentsCancelled() {
             ],
         };
 
-        console.log("Cube Query:", query);
+        console.log("AppointmentsCancelled:", query);
 
         axios
             .post(

@@ -38,7 +38,7 @@ export default function AppointmentsPerStaff() {
             ],
         };
 
-        console.log("Cube Query:", query);
+        console.log("AppointmentsPerStaff:", query);
 
         axios
             .post(

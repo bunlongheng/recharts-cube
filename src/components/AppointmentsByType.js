@@ -31,7 +31,7 @@ export default function AppointmentsByType() {
             ],
         };
 
-        console.log("Cube Query:", query);
+        console.log("AppointmentsByType:", query);
 
         axios
             .post(

@@ -17,7 +17,7 @@ const ranges = [
 
 export default function RescheduledAppointments() {
     const [data, setData] = useState([]);
-    const [range, setRange] = useState("next 4 weeks");
+    const [range, setRange] = useState("last 12 weeks");
 
     useEffect(() => {
         const query = {
@@ -33,12 +33,12 @@ export default function RescheduledAppointments() {
                 {
                     dimension: "appointments.status",
                     operator: "equals",
-                    values: ["Rescheduled"],
+                    values: ["Completed"],
                 },
             ],
         };
 
-        console.log("Cube Query:", query);
+        console.log("RescheduledAppointments:", query);
 
         axios
             .post(

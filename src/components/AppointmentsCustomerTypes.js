@@ -38,7 +38,7 @@ export default function AppointmentsCustomerTypes() {
             ],
         };
 
-        console.log("Cube Query:", query);
+        console.log("AppointmentsCustomerTypes:", query);
 
         axios
             .post(
