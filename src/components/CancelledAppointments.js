@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 
-const CUBE_API_URL = "http://localhost:4000/cubejs-api/v1/load";
+const CUBE_API_URL = process.env.REACT_APP_CUBE_API_URL;
 const CUBE_API_TOKEN = process.env.REACT_APP_CUBEJS_API_TOKEN;
 
 const ranges = [
