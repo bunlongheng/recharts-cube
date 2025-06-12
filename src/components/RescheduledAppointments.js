@@ -18,7 +18,7 @@ const ranges = [
 
 export default function RescheduledAppointments() {
     const [data, setData] = useState([]);
-    const [range, setRange] = useState("next 4 weeks");
+    const [range, setRange] = useState("last 12 weeks");
 
     useEffect(() => {
         const query = {
