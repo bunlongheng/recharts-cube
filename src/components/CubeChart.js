@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
-import { ResponsiveContainer, BarChart, LineChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
+import { ResponsiveContainer, BarChart, LineChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 
 const CUBE_API_URL = process.env.REACT_APP_CUBE_API_URL;
 const CUBE_API_TOKEN = process.env.REACT_APP_CUBEJS_API_TOKEN;
@@ -11,7 +11,6 @@ const ranges = [
     { label: "12W", value: "last 12 weeks" },
     { label: "6M", value: "last 6 months" },
     { label: "12M", value: "last 12 months" },
-    { label: "36M", value: "last 36 months" },
     { label: "Next 4W", value: "next 4 weeks" },
 ];
 
@@ -115,6 +114,7 @@ export default function CubeChart({
                 <ResponsiveContainer width="100%" height={300}>
                     <ChartComponent data={data} layout={layout} margin={{ top: 20, right: 30, left: layout === "vertical" ? 20 : 100, bottom: 20 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+                        <Legend />
                         {layout === "vertical" ? (
                             <>
                                 <XAxis type="number" tick={{ fill: "#666" }} />
