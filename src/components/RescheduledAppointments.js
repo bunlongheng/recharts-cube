@@ -6,7 +6,6 @@ const CUBE_API_URL = process.env.REACT_APP_CUBE_API_URL;
 const CUBE_API_TOKEN = process.env.REACT_APP_CUBEJS_API_TOKEN;
 
 const ranges = [
-    { label: "1D", value: "last 1 day" },
     { label: "7D", value: "last 7 days" },
     { label: "4W", value: "last 4 weeks" },
     { label: "12W", value: "last 12 weeks" },
@@ -34,12 +33,12 @@ export default function RescheduledAppointments() {
                 {
                     dimension: "appointments.status",
                     operator: "equals",
-                    values: ["Rescheduled"],
+                    values: ["Completed"],
                 },
             ],
         };
 
-        console.log("Cube Query:", query);
+        console.log("RescheduledAppointments:", query);
 
         axios
             .post(
