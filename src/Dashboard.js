@@ -1,38 +1,60 @@
 import React from "react";
-import AppointmentsByStatus from "./components/AppointmentsByStatus";
-import AppointmentsPerStaff from "./components/AppointmentsPerStaff";
-import AppointmentsCustomerTypes from "./components/AppointmentsCustomerTypes";
-import AppointmentsByType from "./components/AppointmentsByType";
-import CancelledAppointments from "./components/CancelledAppointments";
-import RescheduledAppointments from "./components/RescheduledAppointments";
+import CubeChart from "./components/CubeChart";
 
 export default function Dashboard() {
+    const chartConfigs = [
+        {
+            title: "Appointments by Status",
+            measure: "appointments.count",
+            dimension: "appointments.status",
+            timeDimension: "appointments.date",
+            chartType: "bar",
+        },
+        {
+            title: "Appointments by Staff",
+            measure: "appointments.count",
+            dimension: "appointments.staffName",
+            timeDimension: "appointments.date",
+            chartType: "bar",
+        },
+        {
+            title: "Appointments by Customer Type",
+            measure: "appointments.count",
+            dimension: "appointments.customerType",
+            timeDimension: "appointments.date",
+            chartType: "bar",
+        },
+        {
+            title: "Appointments by Type",
+            measure: "appointments.count",
+            dimension: "appointments.type",
+            timeDimension: "appointments.date",
+            chartType: "bar",
+        },
+        {
+            title: "Cancelled Appointments",
+            measure: "appointments.cancelledCount", // or use a filter variant if needed
+            dimension: "appointments.date",
+            timeDimension: "appointments.date",
+            chartType: "line",
+        },
+        {
+            title: "Rescheduled Appointments",
+            measure: "appointments.rescheduledCount", // or adapt to your schema
+            dimension: "appointments.date",
+            timeDimension: "appointments.date",
+            chartType: "line",
+        },
+    ];
+
     return (
         <div style={{ padding: 20 }}>
             <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-around", gap: 40 }}>
-                <div style={{ flex: 1, minWidth: 400, maxWidth: 600 }}>
-                    <AppointmentsByStatus />
-                </div>
-
-                <div style={{ flex: 1, minWidth: 400, maxWidth: 600 }}>
-                    <AppointmentsPerStaff />
-                </div>
-
-                <div style={{ flex: 1, minWidth: 400, maxWidth: 600 }}>
-                    <AppointmentsCustomerTypes />
-                </div>
-
-                <div style={{ flex: 1, minWidth: 400, maxWidth: 600 }}>
-                    <AppointmentsByType />
-                </div>
-
-                <div style={{ flex: 1, minWidth: 400, maxWidth: 600 }}>
-                    <CancelledAppointments />
-                </div>
-
-                <div style={{ flex: 1, minWidth: 400, maxWidth: 600 }}>
-                    <RescheduledAppointments />
-                </div>
+                {chartConfigs.map((cfg, idx) => (
+                    <div key={idx} style={{ flex: 1, minWidth: 400, maxWidth: 600 }}>
+                        <CubeChart {...cfg} />
+                    </div>
+                ))}
             </div>
         </div>
     );

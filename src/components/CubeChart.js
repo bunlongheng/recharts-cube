@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
+import { ResponsiveContainer, BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 
 const CUBE_API_URL = process.env.REACT_APP_CUBE_API_URL;
 const CUBE_API_TOKEN = process.env.REACT_APP_CUBEJS_API_TOKEN;
@@ -15,47 +15,53 @@ const ranges = [
     { label: "Next 4W", value: "next 4 weeks" },
 ];
 
-export default function AppointmentsByType() {
+export default function CubeChart({
+    title,
+    measure,
+    dimension,
+    timeDimension,
+    chartType = "bar",
+    color = "#3949AB",
+    layout = "horizontal", // or 'vertical'
+    transformData = null, // optional post-processing function
+}) {
     const [data, setData] = useState([]);
-    const [range, setRange] = useState("next 4 weeks");
+    const [range, setRange] = useState("last 36 months");
 
     useEffect(() => {
         const query = {
-            measures: ["appointments.count"],
-            dimensions: ["appointments.type", "appointments.price"],
+            measures: [measure],
+            dimensions: [dimension],
             timeDimensions: [
                 {
-                    dimension: "appointments.date",
+                    dimension: timeDimension,
+                    granularity: "day",
                     dateRange: range,
                 },
             ],
         };
 
-        console.log("AppointmentsByType:", query);
-
         axios
-            .post(
-                CUBE_API_URL,
-                { query },
-                {
-                    headers: { Authorization: `Bearer ${CUBE_API_TOKEN}` },
-                }
-            )
+            .post(CUBE_API_URL, { query }, { headers: { Authorization: `Bearer ${CUBE_API_TOKEN}` } })
             .then(({ data: { data } }) => {
-                const summary = {};
-                data.forEach(row => {
-                    const type = row["appointments.type"];
-                    const count = +row["appointments.count"];
-                    summary[type] = (summary[type] || 0) + count;
-                });
-                setData(Object.entries(summary).map(([type, count]) => ({ type, count })));
+                if (transformData) {
+                    setData(transformData(data));
+                } else {
+                    setData(data);
+                }
             })
             .catch(() => setData([]));
-    }, [range]);
+    }, [measure, dimension, timeDimension, range, transformData]);
+
+    const dataKey = measure.split(".")[1];
+    const xKey = dimension.split(".")[1];
+
+    const Chart = chartType === "line" ? LineChart : BarChart;
+    const ChartElement = chartType === "line" ? <Line type="monotone" dataKey="count" stroke={color} /> : <Bar dataKey="count" fill={color} isAnimationActive />;
 
     return (
         <div style={{ textAlign: "center", padding: 20 }}>
-            <h3>Appointments by Type</h3>
+            <h3>{title}</h3>
             <div style={{ marginBottom: 16 }}>
                 {ranges.map(r => (
                     <button
@@ -64,7 +70,7 @@ export default function AppointmentsByType() {
                         style={{
                             margin: "0 4px",
                             padding: "4px 8px",
-                            background: r.value === range ? "#1E88E5" : "#eee",
+                            background: r.value === range ? color : "#eee",
                             color: r.value === range ? "#fff" : "#000",
                             border: "none",
                             borderRadius: 4,
@@ -75,17 +81,27 @@ export default function AppointmentsByType() {
                     </button>
                 ))}
             </div>
+
             {data.length === 0 ? (
                 <div style={{ color: "#666", marginTop: 50 }}>No data</div>
             ) : (
                 <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={data} layout="vertical" margin={{ top: 20, right: 30, left: 100, bottom: 20 }}>
+                    <Chart data={data} layout={layout} margin={{ top: 20, right: 30, left: 100, bottom: 20 }}>
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis type="number" />
-                        <YAxis dataKey="type" type="category" />
+                        {layout === "vertical" ? (
+                            <>
+                                <XAxis type="number" />
+                                <YAxis dataKey="status" type="category" />
+                            </>
+                        ) : (
+                            <>
+                                <XAxis dataKey="status" />
+                                <YAxis />
+                            </>
+                        )}
                         <Tooltip />
-                        <Bar dataKey="count" fill="#1E88E5" isAnimationActive />
-                    </BarChart>
+                        {ChartElement}
+                    </Chart>
                 </ResponsiveContainer>
             )}
         </div>
