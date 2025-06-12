@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { ResponsiveContainer, BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
+import { ResponsiveContainer, BarChart, LineChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 
 const CUBE_API_URL = process.env.REACT_APP_CUBE_API_URL;
 const CUBE_API_TOKEN = process.env.REACT_APP_CUBEJS_API_TOKEN;
@@ -15,18 +15,12 @@ const ranges = [
     { label: "Next 4W", value: "next 4 weeks" },
 ];
 
-export default function CubeChart({
-    title,
-    measure,
-    dimension,
-    timeDimension,
-    chartType = "bar",
-    color = "#3949AB",
-    layout = "horizontal", // or 'vertical'
-    transformData = null, // optional post-processing function
-}) {
+export default function CubeChart({ title, measure, dimension, timeDimension, chartType = "bar", color = "#3949AB", layout = "horizontal", transformData = null }) {
     const [data, setData] = useState([]);
-    const [range, setRange] = useState("last 36 months");
+    const [range, setRange] = useState("next 4 weeks");
+
+    const dimensionKey = dimension;
+    const measureKey = measure;
 
     useEffect(() => {
         const query = {
@@ -44,20 +38,13 @@ export default function CubeChart({
         axios
             .post(CUBE_API_URL, { query }, { headers: { Authorization: `Bearer ${CUBE_API_TOKEN}` } })
             .then(({ data: { data } }) => {
-                if (transformData) {
-                    setData(transformData(data));
-                } else {
-                    setData(data);
-                }
+                setData(transformData ? transformData(data) : data);
             })
             .catch(() => setData([]));
     }, [measure, dimension, timeDimension, range, transformData]);
 
-    const dataKey = measure.split(".")[1];
-    const xKey = dimension.split(".")[1];
-
-    const Chart = chartType === "line" ? LineChart : BarChart;
-    const ChartElement = chartType === "line" ? <Line type="monotone" dataKey="count" stroke={color} /> : <Bar dataKey="count" fill={color} isAnimationActive />;
+    const ChartComponent = chartType === "line" ? LineChart : BarChart;
+    const ChartElement = chartType === "line" ? <Line type="monotone" dataKey={measureKey} stroke={color} /> : <Bar dataKey={measureKey} fill={color} isAnimationActive />;
 
     return (
         <div style={{ textAlign: "center", padding: 20 }}>
@@ -86,22 +73,22 @@ export default function CubeChart({
                 <div style={{ color: "#666", marginTop: 50 }}>No data</div>
             ) : (
                 <ResponsiveContainer width="100%" height={300}>
-                    <Chart data={data} layout={layout} margin={{ top: 20, right: 30, left: 100, bottom: 20 }}>
+                    <ChartComponent data={data} layout={layout} margin={{ top: 20, right: 30, left: 100, bottom: 20 }}>
                         <CartesianGrid strokeDasharray="3 3" />
                         {layout === "vertical" ? (
                             <>
                                 <XAxis type="number" />
-                                <YAxis dataKey="status" type="category" />
+                                <YAxis dataKey={dimension} type="category" />
                             </>
                         ) : (
                             <>
-                                <XAxis dataKey="status" />
+                                <XAxis dataKey={dimension} />
                                 <YAxis />
                             </>
                         )}
                         <Tooltip />
                         {ChartElement}
-                    </Chart>
+                    </ChartComponent>
                 </ResponsiveContainer>
             )}
         </div>
