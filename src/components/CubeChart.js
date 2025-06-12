@@ -25,6 +25,7 @@ export default function CubeChart({
     transformData = null,
     filters = [],
     defaultRange = "next 4 weeks", // New prop for default range
+    granularity = "day", // ✅ Add this line
 }) {
     const [data, setData] = useState([]);
     const [range, setRange] = useState(defaultRange); // Use the prop as default
@@ -43,7 +44,7 @@ export default function CubeChart({
             timeDimensions: [
                 {
                     dimension: timeDimension,
-                    granularity: "day",
+                    granularity: granularity || "day",
                     dateRange: range,
                 },
             ],

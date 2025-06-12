@@ -1,7 +1,6 @@
 import React from "react";
 import CubeChart from "./components/CubeChart";
 
-// Define color themes
 const chartThemes = {
     default: "#3949AB",
     business: "#4E73DF",
@@ -20,27 +19,20 @@ export default function Dashboard() {
             timeDimension: "appointments.date",
             chartType: "bar",
             layout: "vertical",
-            defaultRange: "last 12 months", // Custom default range
-            color: chartThemes.business, // Custom color
-            transformData: rows => {
-                const summary = {};
-                rows.forEach(row => {
-                    const key = row["appointments.status"];
-                    const val = +row["appointments.count"];
-                    summary[key] = (summary[key] || 0) + val;
-                });
-                return Object.entries(summary).map(([status, count]) => ({ status, count }));
-            },
+            defaultRange: "last 36 months",
+            color: chartThemes.business,
+            granularity: "day",
         },
         {
-            title: "Appointments by Staff",
+            title: "Appointments Per Staff",
             measure: "appointments.count",
             dimension: "appointments.staff_name",
             timeDimension: "appointments.date",
             chartType: "bar",
             layout: "horizontal",
-            defaultRange: "next 4 weeks", // Different default
+            defaultRange: "next 4 weeks",
             color: chartThemes.healthcare,
+            granularity: "day",
             filters: [
                 {
                     dimension: "appointments.status",
@@ -56,8 +48,9 @@ export default function Dashboard() {
             timeDimension: "appointments.date",
             chartType: "bar",
             layout: "horizontal",
-            defaultRange: "last 12 months",
+            defaultRange: "next 4 weeks",
             color: chartThemes.secondary,
+            granularity: "day",
             filters: [
                 {
                     dimension: "appointments.status",
@@ -72,8 +65,10 @@ export default function Dashboard() {
             dimension: "appointments.type",
             timeDimension: "appointments.date",
             chartType: "bar",
-            defaultRange: "last 12 months",
+            layout: "horizontal",
+            defaultRange: "next 4 weeks",
             color: chartThemes.default,
+            granularity: "day",
         },
         {
             title: "Cancelled Appointments",
@@ -82,8 +77,9 @@ export default function Dashboard() {
             timeDimension: "appointments.date",
             chartType: "line",
             layout: "horizontal",
-            defaultRange: "last 12 months",
+            defaultRange: "last 36 months",
             color: chartThemes.danger,
+            granularity: "day",
             filters: [
                 {
                     dimension: "appointments.status",
@@ -93,14 +89,15 @@ export default function Dashboard() {
             ],
         },
         {
-            title: "Completed Appointments",
+            title: "Rescheduled Appointments",
             measure: "appointments.count",
             dimension: "appointments.staff_name",
             timeDimension: "appointments.date",
             chartType: "bar",
             layout: "horizontal",
-            defaultRange: "last 4 weeks",
+            defaultRange: "last 12 weeks",
             color: chartThemes.warning,
+            granularity: "day",
             filters: [
                 {
                     dimension: "appointments.status",
@@ -119,7 +116,7 @@ export default function Dashboard() {
                     flexWrap: "wrap",
                     justifyContent: "space-around",
                     gap: 40,
-                    backgroundColor: "#f8f9fc", // Light background
+                    backgroundColor: "#f8f9fc",
                     padding: "20px",
                     borderRadius: "8px",
                 }}
